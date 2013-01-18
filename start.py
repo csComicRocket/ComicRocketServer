@@ -6,17 +6,16 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             host = self.headers['Host'].split(':')[0]
-            print(self.headers['Host'], host)
-
+            print(self.headers['Host'], host, self.path)
             found = False
 
-            conn = pymysql.connect(host='localhost', port=3306, user='ohmu', passwd='TGSTGSTGS', db='templater')
+            conn = pymysql.connect(host='localhost', port=3306, user='ohmu', passwd='TGSTGSTGS', db='crts')
             cur = conn.cursor()
 
-            cur.execute("SELECT * FROM domains WHERE domain LIKE '%{0}%'".format(host))
+            cur.execute("SELECT * FROM sites WHERE domain LIKE '%{0}%'".format(host))
 
             for row in cur.fetchall():
-                id, domain, className = row
+                id, className, domain, filePath = row
                 #_class = getattr(FakeTemplates, className)
                 #instance = _class()
                 #print(instance)

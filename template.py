@@ -10,9 +10,9 @@ class TemplatePage:
     _commentTemplate = None     # comment template class name 
     _comments = []              # list of comments
 
-    def __init__(self, template, commentTemplate):
+    def __init__(self, path, template, commentTemplate):
         # load template from file (ie raw html with predefiened key values)
-        templateFile = open(template)
+        templateFile = open(path + '/' + template)
         self._template = Template(templateFile.read())
         templateFile.close()
 
@@ -42,25 +42,25 @@ class TemplatePage:
             instance = commentClass(username, timestamp, title, message)
 
 #http://www.xkcd.com/
-class XKCDPage(TemplatePage):
+class XKCD(TemplatePage):
 
     def __init__(self):
         # call base constructor
-        TemplatePage.__init__(self, 'XKCD.html', None)
+        TemplatePage.__init__(self, 'XKCD', 'XKCD.html', None)
 
 #http://www.penny-arcade.com/
 class PennyArcade(TemplatePage):
 
     def __init__(self):
         # call base constructor
-        TemplatePage.__init__(self, 'PennyArcade.html', None)
+        TemplatePage.__init__(self, 'PennyArcade', 'PennyArcade.html', None)
 
 #http://www.sandraandwoo.com/
 class SandraAndWoo(TemplatePage):
 
     def __init__(self):
         # call base constructor
-        TemplatePage.__init__(self, 'SandraAndWoo.html', None)
+        TemplatePage.__init__(self, 'SandraAndWoo', 'SandraAndWoo.html', None)
 
 #http://www.dilbert.com/
 
@@ -73,7 +73,7 @@ class SandraAndWoo(TemplatePage):
 
 
 if __name__ == '__main__':
-    test = XKCDPage()
+    test = XKCD()
     print(str(test))
     test = PennyArcade()
     print(str(test))
