@@ -1,0 +1,28 @@
+xkcd notes
+
+site:
+    next: next comic in series in the form of '/id/' or just '#' if most recent comic
+    prev: previous comic in series in the form of '/id/' or just '#' if the first comic
+    current: the current page id in the form of '/id/'
+
+page:
+    title: the title of the page
+    title_lower: change {title} toLower then replace spaces with _
+    hover: the hover text on the comic
+
+select first row for page:
+    SELECT * FROM pages p1
+    WHERE p1.page_id = <Page>
+      AND p1.id NOT IN (
+        SELECT p2.next_id FROM pages p2
+        WHERE p2.page_id = <Page>
+      );
+
+select last row for page:
+    SELECT * FROM pages p1
+    WHERE p1.page_id = <Page>
+      AND p1.next_id IS NULL;
+
+image sizes:
+    width: 508, 558, *248, !713, 713, 497, 463, 302, 558, 273
+    heigh: 422, *213, 359, 281, 256, 423, 326, !437, 254, 303

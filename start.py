@@ -1,5 +1,6 @@
 import string, cgi, time, os
 import pymysql
+import template
 from http import server
 
 class MyRequestHandler(server.BaseHTTPRequestHandler):
@@ -15,30 +16,51 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
             cur.execute("SELECT * FROM sites WHERE domain LIKE '%{0}%'".format(host))
 
             for row in cur.fetchall():
-                id, className, domain, filePath = row
-                #_class = getattr(FakeTemplates, className)
-                #instance = _class()
-                #print(instance)
+                siteId, className, domain, filePath = row
                 found = True
                 break
 
-            cur.close()
-            conn.close()
             #find host in DB
 
             if found:
 
                 #instantiate class
+                _class = getattr(template, className)
+                instance = _class(self.path)
 
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
-                self.wfile.write(bytes(className, 'UTF-8'))
-                #rs = os.popen('python /pathToFile/yourScript.py &')
+                if instance.IsValid():
+                    #build headers
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    
+                    #write out the file loaded from the script
+                    self.wfile.write(bytes(str(instance), 'UTF-8'))
+                else:
+                    #find path
+                    try:
+                        print("looking for file: webroot/{0}{1}".format(host, self.path))
+                        f = open('webroot/{0}{1}'.format(host, self.path), 'rb')
+                        self.wfile.write(f.read())
+                    except IOError as e:
+                        self.send_error(404, 'File Not Found %s' % self.path)
+
                 return
 
             else:
+                #look for path
+                try:
+                    print("looking for file: webroot/{0}{1}".format(host, self.path))
+                    f = open('webroot/{0}{1}'.format(host, self.path), 'rb')
+                    self.wfile.write(f.read())
+                except IOError as e:
+                    self.send_error(404, 'File Not Found %s' % self.path)
+
+                #if no path, fail                
                 self.send_error(404, 'File Not Found %s' % self.path)
+
+            cur.close()
+            conn.close()
          
         except Exception as e:
             print(e)
@@ -49,8 +71,8 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
          
 def main():
     try:
-        # you can specify any port you want by changing <q>81</q>
-        HttpServer = server.HTTPServer(('', 81), MyRequestHandler) 
+        # you can specify any port you want by changing <q>80</q>
+        HttpServer = server.HTTPServer(('', 80), MyRequestHandler) 
         print ('starting httpserver...')
         HttpServer.serve_forever()
     except KeyboardInterrupt:
