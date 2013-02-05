@@ -23,7 +23,7 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
             #find host in DB
 
             if found:
-
+                print("found {0}".format(className))
                 #instantiate class
                 _class = getattr(template, className)
                 instance = _class(self.path)

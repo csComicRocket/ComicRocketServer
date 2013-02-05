@@ -191,6 +191,8 @@ class DoomsDayMyDear(TemplatePage):
 
         #get the pages (first, prev, current, next, last)
         pages = self.GetPages(uriPath)
+
+        print (str(pages))
         
         if pages == False:
             return #error
