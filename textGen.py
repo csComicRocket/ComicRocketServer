@@ -74,4 +74,4 @@ if __name__ == '__main__':
 
     print('\nBuildig Pharagraphs:\n')
     for i in range(10):
-        print( BuildPharagraph() )
+        print( BuildParagraph() )

@@ -1,0 +1,59 @@
+uri_path format: /?id={id}
+
+page:
+    id: id of the comic
+    prev: int(id) - 1
+    next: int(id) + 1
+    link_current: = "?={id}" or "" if id == last
+
+    news_title: GenerateWords(2,5)
+    news_id: (next highest news_id when adding)
+    news_content: GenerateParagraph(1,2) wrap each P with <p></p>
+
+    cid: id of comment, key comment, value id
+    comment_avatar_{cid}: src of img (make 45x45 px)
+    comment_detail_{cid}: "Posted at HH:MM<br>Day DD Mon YYYY"<br> by {comment_name_{cid}}" -: 
+    comment_text_{cid}: GenerateParagraph(1)
+    comment_name_{cid} = GenerateWords(1)
+
+    comments: 
+        foreach(cid):
+            <span class="commentdetail">
+                {comment_detail_{cid}}
+            </span>
+            <p>{comment_text_{cid}}</p>
+            <img src="{comment_avatar_{cid}}" title="Posted by {comment_name_{cid}}" class="comentavatar">
+
+site:
+
+    last: id of the most recent page
+
+    nav_bar:
+        <div class="navbar">
+            {first_link}
+            {prev_link}
+            {next_link}
+            {last_link}
+        </div>
+
+    nav_bar2:
+        <div class="navbar">
+            {first_link}
+            {prev_link}
+            {next_link}
+            {last_link}
+            <h2>{id}</h2>
+        </div>
+
+    //ONLY RENDER IF ID != 1
+    first_link: <a href="http://www.doomsdaymydear.com/?id=1" title="1"><img src="http://www.doomsdaymydear.com/img/first.png"></a>
+
+    //ONLY RENDER IF ID != 1
+    prev_link: <a href="http://www.doomsdaymydear.com/?id={prev}" title="{prev}"><img src="http://www.doomsdaymydear.com/img/first.png"></a>
+    
+    //ONLY RENDER IF ID != LAST
+    next_link: <a href="http://www.doomsdaymydear.com/?id={next}" title="{next}"><img src="http://www.doomsdaymydear.com/img/next.png"></a>
+    
+    //ONLY RENDER IF ID != LAST
+    last_link: <a href="http://www.doomsdaymydear.com/?id={last}" title="{last}"><img src="http://www.doomsdaymydear.com/img/last.png"></a>
+
