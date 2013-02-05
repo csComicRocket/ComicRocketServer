@@ -145,7 +145,7 @@ class XKCD(TemplatePage):
         #get the pages (first, prev, current, next, last)
         pages = self.GetPages(uriPath)
         
-        if pages == None:
+        if pages == False:
             return #error
 
         #build vars
@@ -192,7 +192,7 @@ class DoomsDayMyDear(TemplatePage):
         #get the pages (first, prev, current, next, last)
         pages = self.GetPages(uriPath)
         
-        if pages == None:
+        if pages == False:
             return #error
 
         #build vars
