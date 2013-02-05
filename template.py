@@ -14,6 +14,7 @@ class TemplatePage:
     _conn = None                # database connection
     _cur = None                 # database cursor
     siteId = 0                  # the id of the site, loaded from the db
+    pageId = 0                  # the id of the currently loaded page
 
     def __init__(self, path, template, commentTemplate):
         # load template from file (ie raw html with predefiened key values)
@@ -64,7 +65,7 @@ class TemplatePage:
         siteFound = False
         self._cur.execute("SELECT id FROM pages WHERE site_id = {0} AND uri_path = '{1}'".format(self.siteId, uriPath))
         for row in self._cur.fetchall():
-            pageId, = row
+            self.pageId, = row
             siteFound = True
             break
 
@@ -72,7 +73,7 @@ class TemplatePage:
         if uriPath == '/':
             self._cur.execute("SELECT id FROM pages WHERE site_id = {0} AND next_id IS NULL".format(self.siteId))
             for row in self._cur.fetchall():
-                pageId, = row
+                self.pageId, = row
                 siteFound = True
 
         #error if still no site is found
@@ -90,21 +91,21 @@ class TemplatePage:
             break
 
         #get previous page
-        self._cur.execute("SELECT * FROM pages WHERE next_id = {0}".format(pageId))
+        self._cur.execute("SELECT * FROM pages WHERE next_id = {0}".format(self.pageId))
         for row in self._cur.fetchall():
             id, page_id, next_id, uri_path = row
             pages['previousPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
             break
 
         #get current page
-        self._cur.execute("SELECT * FROM pages WHERE id = {0}".format(pageId))
+        self._cur.execute("SELECT * FROM pages WHERE id = {0}".format(self.pageId))
         for row in self._cur.fetchall():
             id, page_id, next_id, uri_path = row
             pages['currentPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
             break
 
         #get next page
-        self._cur.execute("SELECT * FROM pages p1 WHERE p1.id = (SELECT p2.next_id FROM pages p2 WHERE id = {0})".format(pageId))
+        self._cur.execute("SELECT * FROM pages p1 WHERE p1.id = (SELECT p2.next_id FROM pages p2 WHERE id = {0})".format(self.pageId))
         for row in self._cur.fetchall():
             id, page_id, next_id, uri_path = row
             pages['nextPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
@@ -165,13 +166,13 @@ class XKCD(TemplatePage):
             self.SetValue('next', '#')
 
         #get site vars
-        self._cur.execute("SELECT c.key, c.value FROM components c JOIN site_components sc ON c.id = sc.component_id WHERE sc.site_id = {0}".format(siteId))
+        self._cur.execute("SELECT c.key, c.value FROM components c JOIN site_components sc ON c.id = sc.component_id WHERE sc.site_id = {0}".format(self.siteId))
         for row in self._cur.fetchall():
             key, value = row
             self.SetValue(key, value)
 
         #get page vars
-        self._cur.execute("SELECT c.key, c.value FROM components c JOIN page_components pc ON c.id = pc.component_id WHERE pc.page_id = {0}".format(pageId))
+        self._cur.execute("SELECT c.key, c.value FROM components c JOIN page_components pc ON c.id = pc.component_id WHERE pc.page_id = {0}".format(self.pageId))
         for row in self._cur.fetchall():
             key, value = row
             self.SetValue(key, value)
@@ -212,13 +213,13 @@ class DoomsDayMyDear(TemplatePage):
             self.SetValue('next', '#')
 
         #get site vars
-        self._cur.execute("SELECT c.key, c.value FROM components c JOIN site_components sc ON c.id = sc.component_id WHERE sc.site_id = {0}".format(siteId))
+        self._cur.execute("SELECT c.key, c.value FROM components c JOIN site_components sc ON c.id = sc.component_id WHERE sc.site_id = {0}".format(self.siteId))
         for row in self._cur.fetchall():
             key, value = row
             self.SetValue(key, value)
 
         #get page vars
-        self._cur.execute("SELECT c.key, c.value FROM components c JOIN page_components pc ON c.id = pc.component_id WHERE pc.page_id = {0}".format(pageId))
+        self._cur.execute("SELECT c.key, c.value FROM components c JOIN page_components pc ON c.id = pc.component_id WHERE pc.page_id = {0}".format(self.pageId))
         for row in self._cur.fetchall():
             key, value = row
             self.SetValue(key, value)
