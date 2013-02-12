@@ -239,13 +239,13 @@ def AddDoomsDayMyDear(cur):
 
 
 if __name__ == '__main__':
-    page = sys.argv[1]
+    site = sys.argv[1]
     
     #connect to mysql
     conn = pymysql.connect(host='localhost', port=3306, user='ohmu', passwd='TGSTGSTGS', db='crts')
     cur = conn.cursor()
 
-    for case in switch(page):
+    for case in switch(site):
         if case('XKCD'):
             AddXKCD(cur)
             break
