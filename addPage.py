@@ -16,6 +16,26 @@ t.uri_path
 
 def AddXKCD(cur):
 
+    #check if it is the proper number of day updates. Each time this is run it is considered 1 day
+    try:
+        f = open('xkcd.day', 'r+')
+        day = int(f.read())
+        f.close()
+    except Exception as e:
+        f = open('xkcd.day', 'w')
+        day = 0
+        f.write(str(day))
+        f.close()
+
+    #increment day by 1
+    f = open('xkcd.day', 'w')
+    f.write(str((day+1)%7))
+    f.close()
+
+    if not (day in [1, 3, 5]):
+        print('Day Skipped');
+        return
+
     #find site ID
     cur.execute("SELECT id FROM sites WHERE class = 'XKCD'")
     for row in cur.fetchall():
