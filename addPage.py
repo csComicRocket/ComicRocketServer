@@ -2,6 +2,8 @@ import sys, random, collections
 import textGen
 import pymysql
 import png
+import platform
+import time
 from switch import switch
 
 '''
@@ -137,7 +139,48 @@ def AddXKCD(cur):
 
     print("New Page (id:{0}) added to XKCD".format(newId))
 
+    path = 'www.xkcd.com.list' #this is the "domain" field in the database + '.list'
+
+    #we are running on windows, use ./ as path
+    if platform.system() == 'Windows':
+        path = './' + path
+    #we are running on server, use /usr/local/bin/ as path
+    else :
+        path = '/usr/local/bin/' + path
+
+    try:
+        f = open(path, 'a+')
+        f.write("http://www.xkcd.com/{0}/\n".format(newId))
+        f.close()
+    except Exception as e:
+        print(e)
+
 def AddDoomsDayMyDear(cur):
+
+    #check if it is the proper number of day updates. Each time this is run it is considered 1 day
+    try:
+        f = open('doomsdaymydear.day', 'r+')
+        day = int(f.read())
+        f.close()
+    except Exception as e:
+        f = open('doomsdaymydear.day', 'w')
+        day = 0
+        f.write(str(day))
+        f.close()
+
+    #increment day by 1
+    f = open('doomsdaymydear.day', 'w')
+    f.write(str((day+1)%7))
+    f.close()
+
+    if not (day in [1, 5]):
+        print('Day Skipped');
+        return
+
+    #wait 0-4 hours (75sec = 1 hour for accelerated time)
+    duration = random.random() * 4 * 75
+    print("Waiting {0} seconds".format(duration))
+    time.sleep(duration)
 
     #find site ID
     cur.execute("SELECT id FROM sites WHERE class = 'DoomsDayMyDear'")
@@ -256,6 +299,21 @@ def AddDoomsDayMyDear(cur):
 
     print("New Page (id:{0}) added to DoomsDayMyDear".format(newId))
 
+    path = 'www.doomsdaymydear.com.list' #this is the "domain" field in the database + '.list'
+
+    #we are running on windows, use ./ as path
+    if platform.system() == 'Windows':
+        path = './' + path
+    #we are running on server, use /usr/local/bin/ as path
+    else :
+        path = '/usr/local/bin/' + path
+
+    try:
+        f = open(path, 'a+')
+        f.write("http://www.doomsdaymydear.com/?id={0}\n".format(newId))
+        f.close()
+    except Exception as e:
+        print(e)
 
 
 if __name__ == '__main__':
