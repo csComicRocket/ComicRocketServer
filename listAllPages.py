@@ -9,7 +9,7 @@ from switch import switch
 
 def ListPages(cur, comicId, domain, pageParam):
     
-    cur.execute("SELECT id FROM pages WHERE site_id={0}".format(comicId))
+    cur.execute("SELECT id, uri_path FROM pages WHERE site_id={0}".format(comicId))
 
     path = domain + '.list' #this is the "domain" field in the database + '.list'
 
@@ -25,8 +25,8 @@ def ListPages(cur, comicId, domain, pageParam):
         f = open(path, 'w')
     
         for row in cur.fetchall():
-            id, = row
-            f.write(("http://" + domain + pageParam + "\n").format(id))
+            id, uri = row
+            f.write(("http://" + domain + pageParam + "\n").format(uri))
 
         #finally close file
         f.close()
@@ -49,10 +49,10 @@ if __name__ == '__main__':
 
     for case in switch(site):
         if case('XKCD'):
-            ListPages(cur, id, domain, '/{0}/')
+            ListPages(cur, id, domain, '{0}')
             break
         if case('DoomsDayMyDear'):
-            ListPages(cur, id, domain, '/?id={0}')
+            ListPages(cur, id, domain, '{0}')
             break
         if case():
             print ("That site isn't recognized!")
