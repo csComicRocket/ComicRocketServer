@@ -78,6 +78,8 @@ class TemplatePage:
 
         #error if still no site is found
         if not siteFound:
+            print(uriPath)
+            print("Site Not Found!")
             self._valid = False
             return False
 
