@@ -117,25 +117,28 @@ def AddXKCD(cur):
     #generate lowercase title
     lowTitle = title.lower().replace(' ', '_')
 
-    #create comic in appropriate spot
-    f = open("webroot/www.xkcd.com/comics/{0}.png".format(lowTitle), 'wb')      # binary mode is important
-    width = random.randint(248, 713)
-    height = random.randint(217, 437)
-    w = png.Writer(width, height)
+    try:
+        #create comic in appropriate spot
+        f = open("webroot/www.xkcd.com/comics/{0}.png".format(lowTitle), 'wb')      # binary mode is important
+        width = random.randint(248, 713)
+        height = random.randint(217, 437)
+        w = png.Writer(width, height)
 
-    #build image noise
-    lines = []
-    for y in range(height):
-        row = []
-        for x in range(width):
-            row.append(random.randint(0, 255))
-            row.append(random.randint(0, 255))
-            row.append(random.randint(0, 255))
-        lines.append(row)
+        #build image noise
+        lines = []
+        for y in range(height):
+            row = []
+            for x in range(width):
+                row.append(random.randint(0, 255))
+                row.append(random.randint(0, 255))
+                row.append(random.randint(0, 255))
+            lines.append(row)
 
-    #write lines to files
-    w.write(f, lines)
-    f.close()
+        #write lines to files
+        w.write(f, lines)
+        f.close()
+    except Exception as e:
+        print(e)
 
     print("New Page (id:{0}) added to XKCD".format(newId))
 
@@ -150,7 +153,7 @@ def AddXKCD(cur):
 
     try:
         f = open(path, 'a+')
-        f.write("http://www.xkcd.com/{0}/\n".format(newId))
+        f.write("http://www.xkcd.com{0}\n".format(nextUri))
         f.close()
     except Exception as e:
         print(e)
