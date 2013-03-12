@@ -223,6 +223,7 @@ def AddDoomsDayMyDear(cur):
     else:
 
         #make first uri
+        nextId = 1
         firstUri = '/?id=1';
 
         #insert first page
