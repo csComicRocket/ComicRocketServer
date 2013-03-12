@@ -30,7 +30,7 @@ class TemplatePage:
         self._cur = self._conn.cursor()
 
         #find site ID
-        self._cur.execute("SELECT id FROM sites WHERE class = 'XKCD'")
+        self._cur.execute("SELECT id FROM sites WHERE class = '{0}'".format(path))
         for row in self._cur.fetchall():
             self.siteId, = row
             break
@@ -49,10 +49,22 @@ class TemplatePage:
 
     def __str__(self):
         self.SetValue('comments', self._BuildComments())
-        print(self._values)
-        return self._template.safe_substitute(self._values)
+        subText = self._template.safe_substitute(self._values)
+        while subText != self._template.template:
+            self._template = Template(subText)
+            subText = self._template.safe_substitute(self._values)
+        return subText
 
     def _BuildComments(self):
+        
+        #build each comment
+        self._comments = []
+        self._cur.execute("SELECT * FROM comments WHERE page_id = {0}".format(self.pageId))
+        for row in self._cur.fetchall():
+            commentId, pageId, timeStamp, username, title, body, avatar = row
+            self._comments.append(self._commentTemplate(username, timeStamp, title, body, avatar))
+
+        #concatonate comments
         commentHtml = ""
         for comment in self._comments:
             commentHtml += str(comment)
@@ -78,8 +90,8 @@ class TemplatePage:
 
         #error if still no site is found
         if not siteFound:
-            print(uriPath)
-            print("Site Not Found!")
+            #print(uriPath)
+            #print("Site Not Found!")
             self._valid = False
             return False
 
@@ -88,36 +100,36 @@ class TemplatePage:
         #get first page
         self._cur.execute("SELECT * FROM pages p1 WHERE p1.site_id = {0} AND p1.id NOT IN(SELECT p2.next_id FROM pages p2 WHERE p2.next_id IS NOT NULL AND p2.site_id = {0})".format(self.siteId))
         for row in self._cur.fetchall():
-            id, page_id, next_id, uri_path = row
-            pages['firstPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
+            id, site_id, next_id, uri_path = row
+            pages['firstPage'] = {'id': id, 'site_id': site_id, 'next_id': next_id, 'uri_path': uri_path}
             break
 
         #get previous page
         self._cur.execute("SELECT * FROM pages WHERE next_id = {0}".format(self.pageId))
         for row in self._cur.fetchall():
-            id, page_id, next_id, uri_path = row
-            pages['previousPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
+            id, site_id, next_id, uri_path = row
+            pages['previousPage'] = {'id': id, 'site_id': site_id, 'next_id': next_id, 'uri_path': uri_path}
             break
 
         #get current page
         self._cur.execute("SELECT * FROM pages WHERE id = {0}".format(self.pageId))
         for row in self._cur.fetchall():
-            id, page_id, next_id, uri_path = row
-            pages['currentPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
+            id, site_id, next_id, uri_path = row
+            pages['currentPage'] = {'id': id, 'site_id': site_id, 'next_id': next_id, 'uri_path': uri_path}
             break
 
         #get next page
         self._cur.execute("SELECT * FROM pages p1 WHERE p1.id = (SELECT p2.next_id FROM pages p2 WHERE id = {0})".format(self.pageId))
         for row in self._cur.fetchall():
-            id, page_id, next_id, uri_path = row
-            pages['nextPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
+            id, site_id, next_id, uri_path = row
+            pages['nextPage'] = {'id': id, 'site_id': site_id, 'next_id': next_id, 'uri_path': uri_path}
             break
 
         #get last page
         self._cur.execute("SELECT * FROM pages WHERE site_id = {0} AND next_id IS NULL".format(self.siteId))
         for row in self._cur.fetchall():
-            id, page_id, next_id, uri_path = row
-            pages['lastPage'] = {'id': id, 'page_id': page_id, 'next_id': next_id, 'uri_path': uri_path}
+            id, site_id, next_id, uri_path = row
+            pages['lastPage'] = {'id': id, 'site_id': site_id, 'next_id': next_id, 'uri_path': uri_path}
             break
     
         return pages
@@ -146,7 +158,7 @@ class XKCD(TemplatePage):
 
         #get the pages (first, prev, current, next, last)
         pages = self.GetPages(uriPath)
-        
+
         if pages == False:
             return #error
 
@@ -189,32 +201,35 @@ class DoomsDayMyDear(TemplatePage):
 
     def __init__(self, uriPath):
         # call base constructor
-        TemplatePage.__init__(self, 'DoomsDayMyDear', 'DoomsDayMyDear.html', None)
+        TemplatePage.__init__(self, 'DoomsDayMyDear', 'DoomsDayMyDear.html', getattr(comment, 'DoomsDayMyDearComment'))
 
         #get the pages (first, prev, current, next, last)
         pages = self.GetPages(uriPath)
 
-        print (str(pages))
-        
         if pages == False:
             return #error
 
         #build vars
+        self.SetValue('id', pages['currentPage']['uri_path'][5:])
 
         #previous
         if pages['currentPage']['id'] != pages['firstPage']['id']:
-            self.SetValue('prev', pages['previousPage']['uri_path'])
+            self.SetValue('first_link', '<a href="http://www.doomsdaymydear.com{0}"><img src="http://www.doomsdaymydear.com/img/first.png"></a>'.format(pages['firstPage']['uri_path'],))
+            self.SetValue('prev_link', '<a href="http://www.doomsdaymydear.com{0}"><img src="http://www.doomsdaymydear.com/img/prev.png"></a>'.format(pages['previousPage']['uri_path']))
         else:
-            self.SetValue('prev', '#')
+            self.SetValue('first_link', '')
+            self.SetValue('prev_link', '')
 
         #current
-        self.SetValue('current', pages['currentPage']['uri_path'])
+        self.SetValue('current_link', pages['currentPage']['uri_path'])
 
         #next
         if pages['currentPage']['id'] != pages['lastPage']['id']:
-            self.SetValue('next', pages['nextPage']['uri_path'])
+            self.SetValue('next_link', '<a href="http://www.doomsdaymydear.com{0}"><img src="http://www.doomsdaymydear.com/img/next.png"></a>'.format(pages['nextPage']['uri_path']))
+            self.SetValue('last_link', '<a href="http://www.doomsdaymydear.com{0}"><img src="http://www.doomsdaymydear.com/img/last.png"></a>'.format(pages['lastPage']['uri_path']))
         else:
-            self.SetValue('next', '#')
+            self.SetValue('next_link', '')
+            self.SetValue('last_link', '')
 
         #get site vars
         self._cur.execute("SELECT c.key, c.value FROM components c JOIN site_components sc ON c.id = sc.component_id WHERE sc.site_id = {0}".format(self.siteId))
@@ -227,10 +242,6 @@ class DoomsDayMyDear(TemplatePage):
         for row in self._cur.fetchall():
             key, value = row
             self.SetValue(key, value)
-
-            if key == 'title':
-                titleLower = value.lower().replace(' ', '_')
-                self.SetValue('title_lower', titleLower)
 
         return
 

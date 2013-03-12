@@ -38,14 +38,14 @@
 </script>
 <div id="comicset">
 
-    {nav_bar}
+    $nav_bar
     
     
-    <a href="http://www.doomsdaymydear.com/{link_current}">
+    <a href="http://www.doomsdaymydear.com/$current_link">
     
-    <img src="http://www.doomsdaymydear.com/img/comic/{id}.jpg" alt="Comic #{id}" id="comicimg" title="" /></a>
+    <img src="http://www.doomsdaymydear.com/img/comic/$id.png" alt="Comic #$id" id="comicimg" title="" /></a>
 
-    {nav_bar2}
+    $nav_bar2
 </div>
     
 
@@ -62,9 +62,9 @@
   
   
 <div class="newspost">
- <h3><a href="http://www.doomsdaymydear.com/news.php?id={news_id}">{news_title}</a></h3>
+ <h3><a href="http://www.doomsdaymydear.com/news.php?id=$news_id">$news_title</a></h3>
 
-{news_content}
+$news_content
 <p>Cami</p>
 
   </div>
@@ -74,7 +74,7 @@
   <tr>
     <th scope="col">
 
-{comments}
+$comments
 
 <form action="http://www.doomsdaymydear.com/admin/?type=action&amp;a=comiccomment&amp;id=261" method="post" class=formbox>
 <input type="text" name="name" tabindex="1" /><label for="comment_name"><small>Name <a href="http://gravatar.com">(Get a Gravatar)</a></small></label> <br />

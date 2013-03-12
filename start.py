@@ -23,7 +23,7 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
             #find host in DB
 
             if found:
-                print("found {0}".format(className))
+                #print("found {0}".format(className))
                 
                 #instantiate class
                 _class = getattr(template, className)
@@ -40,7 +40,7 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
                 else:
                     #find path
                     try:
-                        print("looking for file: webroot/{0}{1}".format(host, self.path))
+                        #print("looking for file: webroot/{0}{1}".format(host, self.path))
                         f = open('webroot/{0}{1}'.format(host, self.path), 'rb')
                         self.wfile.write(f.read())
                     except IOError as e:
@@ -51,7 +51,7 @@ class MyRequestHandler(server.BaseHTTPRequestHandler):
             else:
                 #look for path
                 try:
-                    print("looking for file: webroot/{0}{1}".format(host, self.path))
+                    #print("looking for file: webroot/{0}{1}".format(host, self.path))
                     f = open('webroot/{0}{1}'.format(host, self.path), 'rb')
                     self.wfile.write(f.read())
                 except IOError as e:

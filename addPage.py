@@ -180,8 +180,8 @@ def AddDoomsDayMyDear(cur):
         print('Day Skipped');
         return
 
-    #wait 0-4 hours (75sec = 1 hour for accelerated time)
-    duration = random.random() * 4 * 75
+    #wait 0-4 hours (5sec = 1 hour for accelerated time)
+    duration = random.random() * 4 * 5
     print("Waiting {0} seconds".format(duration))
     time.sleep(duration)
 
@@ -205,7 +205,8 @@ def AddDoomsDayMyDear(cur):
 
         #build next page uri
         print(lastPage)
-        nextUri = '?id=' + str(int(lastPage['uri_path'][4:]) + 1)
+        nextId = int(lastPage['uri_path'][5:]) + 1
+        nextUri = '/?id=' + str(nextId)
 
         #insert new page
         cur.execute("INSERT INTO pages (site_id, uri_path) VALUES ({0}, '{1}')".format(siteId, nextUri))
@@ -222,7 +223,7 @@ def AddDoomsDayMyDear(cur):
     else:
 
         #make first uri
-        firstUri = '?id=1';
+        firstUri = '/?id=1';
 
         #insert first page
         cur.execute("INSERT INTO pages (site_id, uri_path) VALUES({0}, '{1}')".format(siteId, firstUri))
@@ -281,7 +282,7 @@ def AddDoomsDayMyDear(cur):
     ###
 
     #create comic in appropriate spot
-    f = open("webroot/www.doomsdaymydear.com/img/comic/{0}.png".format(newId), 'wb')      # binary mode is important
+    f = open("webroot/www.doomsdaymydear.com/img/comic/{0}.png".format(nextId), 'wb')      # binary mode is important
     width = 800
     height = 1140
     w = png.Writer(width, height)
