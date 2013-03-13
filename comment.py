@@ -3,11 +3,12 @@ from string import Template
 
 class Comment:
 
-    _values = {}
+    _values = None
     _template = None
 
 
     def __init__(self, template, username, timestamp, title, message, avatar):
+        self._values = {}
         self._values['username'] = username
         self._values['timestamp'] = timestamp
         self._values['title'] = title

@@ -6,7 +6,7 @@ from string import Template
 
 class TemplatePage:
     
-    _values = {}                # key values to replace in the template text
+    _values = None              # key values to replace in the template text
     _template = None            # python template class
     _commentTemplate = None     # comment template class name 
     _comments = []              # list of comments
@@ -17,6 +17,8 @@ class TemplatePage:
     pageId = 0                  # the id of the currently loaded page
 
     def __init__(self, path, template, commentTemplate):
+        self._values = {}
+
         # load template from file (ie raw html with predefiened key values)
         templateFile = open(path + '/' + template)
         self._template = Template(templateFile.read())
