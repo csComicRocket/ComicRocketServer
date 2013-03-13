@@ -42,6 +42,11 @@ def AddDoomsDayMyDear(cur):
                 title = textGen.BuildPhrase(random.randint(1,5), False)
                 message = textGen.BuildParagraph(random.randint(1,5))
 
+                #add link to 25%
+                if random.randint(0,3) == 0:
+                    link = '<a href="http://www.{0}.com">{1}</a>'.format(textGen.BuildWord(random.randint(6,14)), textGen.BuildPhrase.randint(1,4))
+                    message += link
+
                 execution_text = "INSERT INTO `comments` SET `id`=NULL, `page_id`={0}, `datetime`=NOW(), `username`='{1}', `title`='{2}', `body`='{3}', `avatar`=''".format(page['id'], username, title, message)
                 cur.execute(execution_text)
                 commentAdded = True
