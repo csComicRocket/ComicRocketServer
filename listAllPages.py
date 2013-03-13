@@ -9,7 +9,7 @@ from switch import switch
 
 def ListPages(cur, comicId, domain, pageParam):
     
-    cur.execute("SELECT id, uri_path FROM pages WHERE site_id={0}".format(comicId))
+    cur.execute("SELECT id, uri_path FROM pages WHERE site_id={0} ORDER BY id ASC".format(comicId))
 
     path = domain + '.list' #this is the "domain" field in the database + '.list'
 

@@ -315,7 +315,7 @@ def AddDoomsDayMyDear(cur):
 
     try:
         f = open(path, 'a+')
-        f.write("http://www.doomsdaymydear.com/?id={0}\n".format(newId))
+        f.write("http://www.doomsdaymydear.com/?id={0}\n".format(nextId))
         f.close()
     except Exception as e:
         print(e)
