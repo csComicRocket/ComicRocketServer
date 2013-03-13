@@ -204,7 +204,6 @@ def AddDoomsDayMyDear(cur):
     if firstPageExists:
 
         #build next page uri
-        print(lastPage)
         nextId = int(lastPage['uri_path'][5:]) + 1
         nextUri = '/?id=' + str(nextId)
 
@@ -283,24 +282,27 @@ def AddDoomsDayMyDear(cur):
     ###
 
     #create comic in appropriate spot
-    f = open("webroot/www.doomsdaymydear.com/img/comic/{0}.png".format(nextId), 'wb')      # binary mode is important
-    width = 800
-    height = 1140
-    w = png.Writer(width, height)
+    try:
+        f = open("webroot/www.doomsdaymydear.com/img/comic/{0}.png".format(nextId), 'wb')      # binary mode is important
+        width = 800
+        height = 1140
+        w = png.Writer(width, height)
 
-    #build image noise
-    lines = []
-    for y in range(height):
-        row = []
-        for x in range(width):
-            row.append(random.randint(0, 255))
-            row.append(random.randint(0, 255))
-            row.append(random.randint(0, 255))
-        lines.append(row)
+        #build image noise
+        lines = []
+        for y in range(height):
+            row = []
+            for x in range(width):
+                row.append(random.randint(0, 255))
+                row.append(random.randint(0, 255))
+                row.append(random.randint(0, 255))
+            lines.append(row)
 
-    #write lines to files
-    w.write(f, lines)
-    f.close()
+        #write lines to files
+        w.write(f, lines)
+        f.close()
+    except Exception as e:
+        print(e)
 
     print("New Page (id:{0}) added to DoomsDayMyDear".format(newId))
 
