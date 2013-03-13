@@ -74,10 +74,10 @@ def AddXKCD(cur):
     else:
 
         #make first uri
-        firstUri = '/1/';
+        nextUri = '/1/';
 
         #insert first page
-        cur.execute("INSERT INTO pages (site_id, uri_path) VALUES({0}, '{1}')".format(siteId, firstUri))
+        cur.execute("INSERT INTO pages (site_id, uri_path) VALUES({0}, '{1}')".format(siteId, nextUri))
 
         #find the new id
         cur.execute("SELECT LAST_INSERT_ID()")
